@@ -1,3 +1,7 @@
 {
-    "kiroAgent.configureMCP": "Enabled"
+  "godotTools.editorPath.godot4": "godot",
+  "files.associations": {
+    "*.tscn": "ini",
+    "*.tres": "ini"
+  }
 }

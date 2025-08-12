@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3 uid="uid://map_selection_overlay_scene"]
+
+[ext_resource type="Script" path="res://scripts/ui/MapSelectionOverlay.gd" id="1"]
+
+[node name="MapSelectionOverlay" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+script = ExtResource("1")
