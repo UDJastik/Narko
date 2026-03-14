@@ -1,0 +1,55 @@
+name: Build Windows Desktop Artifacts
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build .exe and .msi
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore
+        run: dotnet restore src/Narko.Node.Desktop/Narko.Node.Desktop.csproj
+
+      - name: Publish single-file EXE (win-x64)
+        run: >
+          dotnet publish src/Narko.Node.Desktop/Narko.Node.Desktop.csproj
+          -c Release
+          -r win-x64
+          --self-contained true
+          -p:PublishSingleFile=true
+          -p:IncludeNativeLibrariesForSelfExtract=true
+          -o artifacts/publish/win-x64
+
+      - name: Install WiX Toolset v4
+        run: dotnet tool install --global wix --version 4.*
+
+      - name: Build MSI
+        shell: pwsh
+        run: |
+          $env:PATH += ";$env:USERPROFILE\.dotnet\tools"
+          wix build installer/Product.wxs -arch x64 -d PublishDir="${{ github.workspace }}\artifacts\publish\win-x64" -o artifacts/installer/Narko.Node.Desktop.msi
+
+      - name: Upload EXE artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Narko-Desktop-Exe
+          path: artifacts/publish/win-x64/Narko.Node.Desktop.exe
+          if-no-files-found: error
+
+      - name: Upload MSI artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Narko-Desktop-MSI
+          path: artifacts/installer/Narko.Node.Desktop.msi
+          if-no-files-found: error
